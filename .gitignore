@@ -1,0 +1,44 @@
+# ROS 2 / colcon build outputs
+build/
+install/
+log/
+.colcon*
+.ros/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake-build-*/
+compile_commands.json
+
+# Editors
+.vscode/
+.idea/
+*.code-workspace
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+
+# Temporary and generated files
+*.swp
+*.swo
+.DS_Store
+launch_params_*
+frames_*.gv
+frames_*.pdf
+
+# Exclude only if this data is generated and not part of the assignment
+src/control_planner/control_planner/save_datas/
+
+# Optional large files: uncomment only if you want to exclude them
+# *.bag
+# *.onnx
+# *.pt
+# *.bin
+# *.stl
+# *.fbx
