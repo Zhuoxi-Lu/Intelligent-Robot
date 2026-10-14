@@ -19,7 +19,42 @@
         <child_frame_id>chassis</child_frame_id>
         <odom_publish_frequency>30</odom_publish_frequency> <!--odom publish frequency-->
     </plugin>
+    <!-- real odm -->
+    <plugin
+        filename="gz-sim-odometry-publisher-system"
+        name="gz::sim::systems::OdometryPublisher">
 
+        <!-- 消息中的参考坐标系名称。 -->
+        <!-- 这个插件取得的是模型在Gazebo世界中的位姿。 -->
+        <odom_frame>world</odom_frame>
+
+        <!-- 被描述的坐标原点名称。 -->
+        <!-- 这里描述小车模型原点，不能只改名字就认为它是chassis原点。 -->
+        <robot_base_frame>vehicle_blue_origin</robot_base_frame>
+
+        <!-- 保留三维位置和朝向；后续平面实验主要使用x、y和yaw。 -->
+        <dimensions>3</dimensions>
+
+        <!-- 每秒仿真时间发布30次，方便与现有里程计记录比较。 -->
+        <odom_publish_frequency>30</odom_publish_frequency>
+
+        <!-- 不为真值输出主动添加高斯噪声。 -->
+        <gaussian_noise>0</gaussian_noise>
+
+        <!-- 不增加相对于模型原点的位置或旋转偏移。 -->
+        <xyz_offset>0 0 0</xyz_offset>
+        <rpy_offset>0 0 0</rpy_offset>
+
+        <!-- 使用独立话题，避免与原来的轮式里程计混在一起。 -->
+        <odom_topic>/model/vehicle_blue/ground_truth/odometry</odom_topic>
+
+        <!-- 协方差版本也使用独立话题；这一步暂不桥接它。 -->
+        <odom_covariance_topic>/model/vehicle_blue/ground_truth/odometry_with_covariance</odom_covariance_topic>
+
+        <!-- 插件同时产生的变换也使用独立话题。 -->
+        <!-- 这一步不将它桥接到ROS的/tf。 -->
+        <tf_topic>/model/vehicle_blue/ground_truth/tf</tf_topic>
+    </plugin>
     <!--chassis-->
     <link name='chassis'>
         <pose relative_to='__model__'>0.5 0 0.4 0 0 0</pose>
@@ -55,7 +90,7 @@
             </geometry>
         </collision>
         <sensor name="lidar_sensor" type="gpu_lidar">
-          <!-- on the top of the car 0.35m -->
+          <!-- lidar is on the top of the car 0.35m -->
           <pose>0 0 0.35 0 0 0</pose>
           <always_on>true</always_on>
           <update_rate>3</update_rate>
