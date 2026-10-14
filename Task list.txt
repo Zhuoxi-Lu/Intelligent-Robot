@@ -1,0 +1,9 @@
+# 编译
+colcon build --packages-select learning_pkg_python
+
+# 运行
+gz sim src/learning_pkg_python/world/car_world.sdf 
+
+ros2 run ros_gz_bridge parameter_bridge --ros-args   -p config_file:="$PWD/src/learning_pkg_python/config/bridge.yaml"
+
+ros2 run learning_pkg_python autodrive --ros-args -p use_sim_time:=true

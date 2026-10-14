@@ -1,3 +1,4 @@
+# ros2 bridge to gazebo
 - ros_topic_name: "/cmd_vel"
   gz_topic_name: "/model/vehicle_blue/cmd_vel"
   ros_type_name: "geometry_msgs/msg/Twist"
@@ -14,4 +15,18 @@
   gz_topic_name: "/model/vehicle_blue/tf"
   ros_type_name: "tf2_msgs/msg/TFMessage"
   gz_type_name: "gz.msgs.Pose_V"
+  direction: GZ_TO_ROS
+
+# gazebo time
+- ros_topic_name: "/clock"
+  gz_topic_name: "/world/car_world/clock"
+  ros_type_name: "rosgraph_msgs/msg/Clock"
+  gz_type_name: "gz.msgs.Clock"
+  direction: GZ_TO_ROS
+
+# ROS2 scaning topic
+- ros_topic_name: "/scan"
+  gz_topic_name: "/model/vehicle_blue/scan"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
   direction: GZ_TO_ROS

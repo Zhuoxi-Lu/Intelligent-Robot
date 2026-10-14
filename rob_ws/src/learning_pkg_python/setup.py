@@ -24,6 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'autodrive = learning_pkg_python.autodrive:main'
         ],
     },
 )
