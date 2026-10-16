@@ -12,7 +12,7 @@ from rclpy.executors import ExternalShutdownException
 from nav_msgs.msg import Odometry
 
 def quaternation_to_yaw(q):
-    # translate the posiont into rad
+    # 四元数转弧度
 
     numerator = 2.0 * (q.w * q.z + q.x * q.y)
     denominator = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
@@ -24,7 +24,7 @@ class TrajectoryRecorder(Node):
     def __init__(self):
         super().__init__("trajectory_recorder")  
 
-        # create results。
+        # create results
         self.declare_parameter("output_dir", "results")
 
         # 读取参数，并转换为路径对象

@@ -13,8 +13,8 @@
         
         <!-- topic init-->
         <topic>/model/vehicle_blue/cmd_vel</topic>
-        <odom_topic> /model/vehicle_blue/odometry</odom_topic>
-        <tf_topic> /model/vehicle_blue/tf</tf_topic>
+        <odom_topic>/model/vehicle_blue/odometry</odom_topic>
+        <tf_topic>/model/vehicle_blue/tf</tf_topic>
         <frame_id>odom</frame_id>
         <child_frame_id>chassis</child_frame_id>
         <odom_publish_frequency>30</odom_publish_frequency> <!--odom publish frequency-->
@@ -82,44 +82,104 @@
                 <specular>0.0 0.0 1.0 1</specular>
             </material>
         </visual>
-        <collision name='collision'>
+        <!-- 车体的实体碰撞形状：这里只能放几何、接触等碰撞配置。 -->
+        <collision name="collision">
             <geometry>
                 <box>
+                    <!-- 恢复与车体可见外形一致的长、宽、高，单位米。 -->
                     <size>2.0 1.0 0.5</size>
                 </box>
             </geometry>
         </collision>
+        <!-- IMU -->
+        <sensor name="imu_sensor" type="imu">
+
+            <pose>-0.5 0 0 0 0 0</pose>
+
+            <!-- 仿真运行时启用。 -->
+            <always_on>true</always_on>
+
+            <!-- 每秒仿真时间输出50次。 -->
+            <update_rate>50</update_rate>
+
+            <!-- Gazebo侧的IMU话题。 -->
+            <topic>/model/vehicle_blue/imu</topic>
+
+            <!-- 消息中的传感器坐标系名称。 -->
+            <gz_frame_id>imu_link</gz_frame_id>
+
+            <!-- IMU测量配置。 -->
+            <imu>
+
+                <!-- 角速度测量设置。 -->
+                <angular_velocity>
+
+                    <!-- 给z轴陀螺仪测量加入高斯噪声。 -->
+                    <z>
+                        <noise type="gaussian">
+
+                            <!-- 均值0：此处不加入固定偏差。 -->
+                            <mean>0</mean>
+
+                            <!-- 标准差0.01 rad/s，是本实验选取的示例值。 -->
+                            <!-- 这是对测量数据施加噪声，不是填写协方差。 -->
+                            <stddev>0.01</stddev>
+
+                        </noise>
+                    </z>
+
+                </angular_velocity>
+            </imu>
+        </sensor> 
+        <!-- 雷达是chassis的子元素，与collision并列，不能放在box里面。 -->
         <sensor name="lidar_sensor" type="gpu_lidar">
-          <!-- lidar is on the top of the car 0.35m -->
-          <pose>0 0 0.35 0 0 0</pose>
-          <always_on>true</always_on>
-          <update_rate>3</update_rate>
-          <visualize>false</visualize>
-          <topic>/model/vehicle_blue/scan</topic>
+            <!-- 雷达相对车体原点向上0.35米，没有额外旋转。 -->
+            <pose>0 0 0.35 0 0 0</pose>
+            <always_on>true</always_on>
+            <!-- 雷达10Hz；下面的IMU才使用50Hz。 -->
+            <update_rate>10</update_rate>
+            <visualize>false</visualize>
+            <topic>/model/vehicle_blue/scan</topic>
+            <gz_frame_id>laser_frame</gz_frame_id>
+            <lidar>
+                <scan>
+                    <horizontal>
+                        <!-- 360个采样方向，覆盖水平一整圈。 -->
+                        <samples>360</samples>
+                        <resolution>1</resolution>
+                        <min_angle>-3.141592653589793</min_angle>
+                        <max_angle>3.141592653589793</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <!-- 最小、最大距离和距离分辨率参数，单位米。 -->
+                    <min>0.10</min>
+                    <max>12.0</max>
+                    <resolution>0.01</resolution>
+                </range>
+            </lidar>
+        </sensor>
 
-          <gz_frame_id>laser_frame</gz_frame_id>
-          <!-- lidar parameter -->
-          <lidar>
-            <scan>
-              <horizontal>
-                <!-- 360angle  采样点-->
-                <samples>360</samples>
-
-                <resolution>1</resolution>
-                <!-- pi -->
-                <min_angle>-3.141592653589793</min_angle>
-                <max_angle>3.141592653589793</max_angle>
-              </horizontal>
-            </scan>
-            <range>
-              <!-- 最近测量距离为0.10米 -->
-              <min>0.10</min>
-              <!-- 最远测量距离为12.0米 -->
-              <max>12.0</max>
-              <!-- 距离分辨率参数；不是随机噪声标准差 -->
-              <resolution>0.01</resolution>
-            </range>
-          </lidar>
+        <!-- 按上一教学步骤补齐IMU；与雷达并列。 -->
+        <sensor name="imu_sensor" type="imu">
+            <!-- 两驱动轮中点相对chassis的位置。 -->
+            <pose>-0.5 0 0 0 0 0</pose>
+            <always_on>true</always_on>
+            <update_rate>50</update_rate>
+            <topic>/model/vehicle_blue/imu</topic>
+            <gz_frame_id>imu_link</gz_frame_id>
+            <imu>
+                <angular_velocity>
+                    <z>
+                        <!-- 对转向角速度添加零均值高斯测量噪声。 -->
+                        <noise type="gaussian">
+                            <mean>0</mean>
+                            <!-- 标准差单位为rad/s；不等于协方差。 -->
+                            <stddev>0.01</stddev>
+                        </noise>
+                    </z>
+                </angular_velocity>
+            </imu>
         </sensor>
     </link>
 

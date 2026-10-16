@@ -6,10 +6,12 @@
             <real_time_factor>1.0</real_time_factor>
         </physics>
 
-        <!-- 启动渲染传感器系统，用于生成GPU雷达和摄像头数据 -->
+        <!-- 启动渲染传感器系统，用于生成GPU雷达,摄像头,IMU数据 -->
         <plugin
-            filename="gz-sim-sensors-system"
-            name="gz::sim::systems::Sensors">
+            filename="gz-sim-imu-system"
+            name="gz::sim::systems::Imu">
+        </plugin>
+        <plugin> 
             <render_engine>ogre2</render_engine>
         </plugin>
         <plugin
@@ -68,12 +70,11 @@
         <!-- loading car models -->
         <include>
             <uri>model://vehicle_blue</uri>
-            <name>vehicle_blue</name>
-            <!-- 生成位置 -->
+            <name>vehicle_blue</name>            <!-- 生成位置 -->
             <pose>0 0 0.02 0 0 0</pose>
         </include>                      
         <!-- lidar test model -->
-        <model name="lidar_target">
+        <model name="lidar_target">  
             <static>true</static>
             <pose>4 0 1 0 0 0</pose>
 
