@@ -16,7 +16,7 @@
         <odom_topic>/model/vehicle_blue/odometry</odom_topic>
         <tf_topic>/model/vehicle_blue/tf</tf_topic>
         <frame_id>odom</frame_id>
-        <child_frame_id>chassis</child_frame_id>
+        <child_frame_id>base_link</child_frame_id>
         <odom_publish_frequency>30</odom_publish_frequency> <!--odom publish frequency-->
     </plugin>
     <!-- real odm -->
@@ -82,56 +82,17 @@
                 <specular>0.0 0.0 1.0 1</specular>
             </material>
         </visual>
-        <!-- 车体的实体碰撞形状：这里只能放几何、接触等碰撞配置。 -->
+        <!-- 车体的实体碰撞形状 -->
         <collision name="collision">
             <geometry>
                 <box>
-                    <!-- 恢复与车体可见外形一致的长、宽、高，单位米。 -->
+                    <!-- 长、宽、高，单位米。 -->
                     <size>2.0 1.0 0.5</size>
                 </box>
             </geometry>
         </collision>
-        <!-- IMU -->
-        <sensor name="imu_sensor" type="imu">
-
-            <pose>-0.5 0 0 0 0 0</pose>
-
-            <!-- 仿真运行时启用。 -->
-            <always_on>true</always_on>
-
-            <!-- 每秒仿真时间输出50次。 -->
-            <update_rate>50</update_rate>
-
-            <!-- Gazebo侧的IMU话题。 -->
-            <topic>/model/vehicle_blue/imu</topic>
-
-            <!-- 消息中的传感器坐标系名称。 -->
-            <gz_frame_id>imu_link</gz_frame_id>
-
-            <!-- IMU测量配置。 -->
-            <imu>
-
-                <!-- 角速度测量设置。 -->
-                <angular_velocity>
-
-                    <!-- 给z轴陀螺仪测量加入高斯噪声。 -->
-                    <z>
-                        <noise type="gaussian">
-
-                            <!-- 均值0：此处不加入固定偏差。 -->
-                            <mean>0</mean>
-
-                            <!-- 标准差0.01 rad/s，是本实验选取的示例值。 -->
-                            <!-- 这是对测量数据施加噪声，不是填写协方差。 -->
-                            <stddev>0.01</stddev>
-
-                        </noise>
-                    </z>
-
-                </angular_velocity>
-            </imu>
-        </sensor> 
-        <!-- 雷达是chassis的子元素，与collision并列，不能放在box里面。 -->
+       
+        <!-- lidar -->
         <sensor name="lidar_sensor" type="gpu_lidar">
             <!-- 雷达相对车体原点向上0.35米，没有额外旋转。 -->
             <pose>0 0 0.35 0 0 0</pose>
@@ -160,7 +121,7 @@
             </lidar>
         </sensor>
 
-        <!-- 按上一教学步骤补齐IMU；与雷达并列。 -->
+        <!-- IMU -->
         <sensor name="imu_sensor" type="imu">
             <!-- 两驱动轮中点相对chassis的位置。 -->
             <pose>-0.5 0 0 0 0 0</pose>
