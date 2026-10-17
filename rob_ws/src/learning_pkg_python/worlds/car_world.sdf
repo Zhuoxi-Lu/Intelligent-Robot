@@ -76,7 +76,7 @@
             <pose>0 0 0.02 0 0 0</pose>
         </include>                      
         <!-- lidar test model -->
-        <model name="lidar_target">  
+        <!-- <model name="lidar_target">  
             <static>true</static>
             <pose>4 0 1 0 0 0</pose>
 
@@ -94,13 +94,13 @@
                             <size>1 1 2</size>
                         </box>
                     </geometry>
-                    <!-- orange -->
+                    
                     <material>
                         <ambient>1 0.4 0 1</ambient>
                         <diffuse>1 0.4 0 1</diffuse>
                     </material>
                 </visual>
             </link>
-        </model>
+        </model> -->
     </world>
 </sdf>

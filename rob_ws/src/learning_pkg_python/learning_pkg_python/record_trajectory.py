@@ -37,10 +37,17 @@ class TrajectoryRecorder(Node):
 
         self.run_dir = output_dir / run_name  # combine together
         self.run_dir.mkdir(parents=True, exist_ok=False)  # create catalog
-
+        
+        # 打开轮
+        # self.odom_file = (self.run_dir / "wheel_odom.csv").open(
+        #     "w", newline="", encoding="utf-8"
+        # )
+        
+        # 打开带噪声轮
         self.odom_file = (self.run_dir / "wheel_odom.csv").open(
             "w", newline="", encoding="utf-8"
         )
+
         self.truth_file = (self.run_dir / "ground_truth.csv").open(
             "w", newline="", encoding="utf-8"
         )
@@ -68,10 +75,19 @@ class TrajectoryRecorder(Node):
         self.odom_count = 0  
         self.truth_count = 0 
 
-        # subscribe odom topic
+        # # subscribe odom topic
+        # 记录原始轮速，作为航位推算的输入
+        # self.odom_sub = self.create_subscription(
+        #     Odometry,
+        #     "/odom",
+        #     self.record_odom,
+        #     10,
+        # )
+
+        # 记录带噪声的轮速，作为航位推算的输入 
         self.odom_sub = self.create_subscription(
             Odometry,
-            "/odom",
+            "/wheel/odometry",
             self.record_odom,
             10,
         )
