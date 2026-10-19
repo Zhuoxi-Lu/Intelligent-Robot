@@ -1,9 +1,60 @@
-# 编译
-colcon build --packages-select learning_pkg_python
+# 进入工作空间。
+cd "$HOME/Documents/Intelligent Robot/rob_ws"
 
-# 运行
-gz sim src/learning_pkg_python/world/car_world.sdf 
+# 加载当前工作空间环境。
+source install/setup.bash
 
-ros2 run ros_gz_bridge parameter_bridge --ros-args   -p config_file:="$PWD/src/learning_pkg_python/config/bridge.yaml"
+# 设置小车模型搜索目录。
+export GZ_SIM_RESOURCE_PATH="$PWD/src/learning_pkg_python/models"
 
-ros2 run learning_pkg_python autodrive --ros-args -p use_sim_time:=true
+# 使用软件渲染，并自动开始仿真。
+LIBGL_ALWAYS_SOFTWARE=1 gz sim -r \
+  "$PWD/src/learning_pkg_python/worlds/car_world.sdf"
+  
+# 启动ros连接gazebo桥
+ ros2 run ros_gz_bridge parameter_bridge --ros-args \
+  -p config_file:="$PWD/src/learning_pkg_python/config/bridge.yaml"
+  
+# 发布车体安装TF 
+  ros2 run tf2_ros static_transform_publisher \
+  --x 0.5 --y 0 --z 0.4 \
+  --roll 0 --pitch 0 --yaw 0 \
+  --frame-id base_link \
+  --child-frame-id chassis
+  
+# 发布雷达安装TF 
+  ros2 run tf2_ros static_transform_publisher \
+  --x 0 --y 0 --z 0.35 \
+  --roll 0 --pitch 0 --yaw 0 \
+  --frame-id chassis \
+  --child-frame-id laser_frame
+# 发布IMU安装TF 
+  ros2 run tf2_ros static_transform_publisher \
+  --x -0.5 --y 0 --z 0 \
+  --roll 0 --pitch 0 --yaw 0 \
+  --frame-id chassis \
+  --child-frame-id imu_link
+# 启动轮速加噪声节点  
+  python3 src/learning_pkg_python/learning_pkg_python/wheel_noise.py \
+  --ros-args \
+  -p use_sim_time:=true \
+  -p sigma_v:=0.02 \
+  -p sigma_w:=0.02 \
+  -p seed:=42
+# 启动EKF  
+  ros2 run robot_localization ekf_node --ros-args \
+  -r __node:=ekf_filter_node \
+  --params-file "$PWD/src/learning_pkg_python/config/ekf.yaml"
+# 启动RVIZ 
+rviz2 \
+  -d "$PWD/src/learning_pkg_python/config/robot_view.rviz" \
+  --ros-args -p use_sim_time:=true
+  
+# 启动CSV记录程序
+python3 src/learning_pkg_python/learning_pkg_python/record_trajectory.py \
+  --ros-args \
+  -p output_dir:="$PWD/results"
+
+# 启动自动驾驶
+  ros2 run learning_pkg_python autodrive \
+  --ros-args -p use_sim_time:=true
